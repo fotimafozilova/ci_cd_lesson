@@ -1,0 +1,40 @@
+name: Flutter CI/CD
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Repositoryni yuklash
+        uses: actions/checkout@v3
+
+      - name: Flutter SDK ni yuklash
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.29.0"  # Bu yerda Flutter versiyasini yangilab turing
+
+      - name: Dependencylarni yuklash
+        run: flutter pub get
+
+      - name: Testlarni ishga tushirish
+        run: flutter test
+
+      - name: APK build qilish
+        run: flutter build apk --release
+
+      - name: AAB build qilish
+        run: flutter build appbundle --release
+
+      - name: Build natijalarini saqlash
+        uses: actions/upload-artifact@v3
+        with:
+          name: flutter-builds
+          path: build/app/outputs/flutter-apk/*.apk
